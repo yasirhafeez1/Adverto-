@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ADVERTO</title>
+    <style>
+        /* Styles wese hi hain */
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
+        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 60px; }
+        
+        /* Screen Classes */
+        .screen { display: none; padding: 20px; }
+        .screen.active { display: block; }
+        
+        /* Loading Screen Style */
+        #loading-screen { text-align: center; padding-top: 50%; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #007bff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .btn { display: block; width: 100%; padding: 12px; border: none; border-radius: 5px; background-color: #007bff; color: #fff; cursor: pointer; font-size: 16px; box-sizing: border-box; }
+        .btn:hover { background-color: #0056b3; }
+        
+        .btn-contact { background-color: #ffc107; color: #212529; margin-top: 60px; }
+        .btn-contact:hover { background-color: #e0a800; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        #login-screen h2 { text-align: center; margin-bottom: 20px; }
+        .toggle-form { text-align: center; margin-top: 15px; }
+        .toggle-form a { color: #007bff; text-decoration: none; cursor: pointer; }
+        .nav { display: flex; justify-content: space-around; background-color: #007bff; padding: 10px 0; position: sticky; top: 0; z-index: 100; }
+        .nav-btn { color: #fff; background: none; border: none; font-size: 14px; cursor: pointer; padding: 5px 10px; }
+        .nav-btn.active { border-bottom: 2px solid #fff; }
+        #home-screen .profile { text-align: center; margin: 20px 0; }
+        #home-screen .profile img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+        #home-screen .coins { text-align: center; font-size: 24px; margin-bottom: 30px; }
+        .task { border: 1px solid #ddd; border-radius: 5px; padding: 15px; background-color: #f9f9f9; margin-bottom: 15px; }
+        .task .watch-btn { background-color: #28a745; color: #fff; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .task .watch-btn.claim-btn { background-color: #ffc107; color: #212529; }
+        .task .watch-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
+        .referral-box { background-color: #e9f5ff; border: 1px dashed #007bff; padding: 15px; margin-bottom: 20px; text-align: center; word-wrap: break-word; }
+        #referral-code { font-weight: bold; font-size: 1.2em; color: #0056b3; }
+        .referred-user { background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin-bottom: 5px; border-radius: 5px; }
+        .withdraw-option { background-color: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; padding: 15px; margin-bottom: 15px; cursor: pointer; text-align: center; }
+        #task-completed-banner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #28a745; color: #fff; padding: 20px 40px; border-radius: 10px; text-align: center; z-index: 1001; }
+        .close-btn { position: absolute; top: 5px; right: 10px; font-size: 20px; cursor: pointer; }
+        #history-container { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        #history-table { width: 100%; border-collapse: collapse; }
+        #history-table th, #history-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        #history-table th { background-color: #f2f2f2; }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-accepted { color: #28a745; font-weight: bold; }
+        .status-rejected { color: #dc3545; font-weight: bold; }
+
+        .ad-banner-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 50px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- NEW LOADING SCREEN (Sabse pehle ye dikhega) -->
+        <div id="loading-screen" class="screen active">
+            <div class="loader"></div>
+            <h3>Please Wait...</h3>
+        </div>
+
+        <!-- LOGIN SCREEN (Ab default active nahi hai) -->
+        <div id="login-screen" class="screen">
+            <div id="login-form">
+                <h2>Login</h2>
+                <div class="form-group"><input type="email" id="login-email" placeholder="Email" required></div>
+                <div class="form-group"><input type="password" id="login-password" placeholder="Password" required></div>
+                <button type="button" class="btn" onclick="login()">Login</button>
+                <div class="toggle-form"><a onclick="toggleForms(true)">Don't have an account? Signup</a></div>
+            </div>
+            <div id="signup-form" style="display: none;">
+                <h2>Signup</h2>
+                <div class="form-group"><input type="email" id="signup-email" placeholder="Email" required></div>
+                <div class="form-group"><input type="password" id="signup-password" placeholder="Password" required></div>
+                <div class="form-group"><input type="text" id="referral-code-input" placeholder="Referral Code (Optional)"></div>
+                <button type="button" class="btn" onclick="signup()">Signup</button>
+                <div class="toggle-form"><a onclick="toggleForms(false)">Already have an account? Login</a></div>
+            </div>
+        </div>
+
+        <!-- APP SCREEN -->
+        <div id="app-screen" style="display: none;">
+            <div class="nav">
+                <button id="nav-home" class="nav-btn" onclick="showScreen('home-screen')">Home</button>
+                <button id="nav-earn" class="nav-btn" onclick="showScreen('earn-screen')">Earn</button>
+                <button id="nav-referral" class="nav-btn" onclick="showScreen('referral-screen')">Referral</button>
+                <button id="nav-withdraw" class="nav-btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
+                <button class="nav-btn" onclick="logout()">Logout</button>
+            </div>
+            <div id="home-screen" class="screen">
+                <div class="profile"><img src="https://via.placeholder.com/80" alt="Profile Picture"><h3 id="user-identifier"></h3></div>
+                <div class="coins">Coins: <span id="coin-balance">0</span></div>
+                <button type="button" class="btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
+                <button type="button" class="btn btn-contact" onclick="window.location.href='https://whatsapp.com/channel/0029VbAsxN09WtC46ocaoR1o'">Contact Us</button>
+            </div>
+            <div id="earn-screen" class="screen"><h2>Tasks</h2><div id="task-list"></div></div>
+            <div id="referral-screen" class="screen">
+                <h2>Referral Program</h2>
+                <div class="referral-box"><p>Share this code. You get 200 coins for each friend who signs up!</p><p id="referral-code"></p></div>
+                <h3>Users you referred:</h3><div id="referred-users-list"></div>
+            </div>
+            <div id="withdraw-screen" class="screen">
+                <h2>Withdraw</h2>
+                <div class="withdraw-option" onclick="showWithdrawForm('Easypaisa')"><h3>Easypaisa</h3></div>
+                <div class="withdraw-option" onclick="showWithdrawForm('Jazzcash')"><h3>Jazzcash</h3></div>
+                <div id="history-container">
+                    <h3>Withdrawal History</h3>
+                    <table id="history-table">
+                        <thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+                        <tbody id="history-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="withdraw-form-screen" class="screen">
+                <h2 id="withdraw-method-title"></h2>
+                <div class="form-group"><input type="text" id="account-number" placeholder="Account Number"></div>
+                <div class="form-group"><input type="text" id="account-name" placeholder="Account Name"></div>
+                <div class="form-group"><input type="number" id="withdraw-amount" placeholder="Amount (min 5000 coins)"></div>
+                <button type="button" class="btn" onclick="processWithdrawal()">Withdraw</button>
+                <button type="button" class="btn" onclick="showScreen('withdraw-screen')" style="background-color: #6c757d; margin-top: 10px;">Back</button>
+            </div>
+        </div>
+    </div>
+    <div id="task-completed-banner">
+        <span class="close-btn" onclick="hideTaskCompletedBanner()">&times;</span>
+        <h3>Task Completed!</h3><p>30 coins have been added to your account.</p>
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyDi1ny9WpDMyTOY-g6-87B9ApMzjzo7vx4", authDomain: "yasir-hafeez.firebaseapp.com", databaseURL: "https://yasir-hafeez-default-rtdb.firebaseio.com", projectId: "yasir-hafeez", storageBucket: "yasir-hafeez.appspot.com", messagingSenderId: "757913317141", appId: "1:757913317141:web:cc8b323bcee9c86fcec31c", measurementId: "G-PZ90Q2JDK1" };
+        const app = firebase.initializeApp(firebaseConfig); const auth = firebase.auth(); const db = firebase.firestore(); let currentUser = null; let userData = {};
+        
+        function getTodayDateString() { const today = new Date(); const year = today.getFullYear(); const month = String(today.getMonth() + 1).padStart(2, '0'); const day = String(today.getDate()).padStart(2, '0'); return `${year}-${month}-${day}`; }
+        async function checkAndResetTasksDaily() { if (!currentUser) return; const todayStr = getTodayDateString(); const lastResetDate = userData.lastTaskResetDate; if (lastResetDate !== todayStr) { const userRef = db.collection('users').doc(currentUser.uid); try { await userRef.update({ tasksCompleted: [], lastTaskResetDate: todayStr }); userData.tasksCompleted = []; userData.lastTaskResetDate = todayStr; } catch (error) { console.error("Error resetting tasks: ", error); } } }
+        
+        // === AUTH LISTENER: Yeh decide karega ke kaunsi screen dikhani hai ===
+        auth.onAuthStateChanged(user => { 
+            const loadingScreen = document.getElementById('loading-screen');
+            const loginScreen = document.getElementById('login-screen');
+            const appScreen = document.getElementById('app-screen');
+
+            if (user) { 
+                currentUser = user;
+                
+                // Setup Realtime Listener
+                db.collection('users').doc(currentUser.uid).onSnapshot(async (doc) => { 
+                    if (doc.exists) { 
+                        userData = doc.data(); 
+                        await checkAndResetTasksDaily(); 
+                        updateUI(); 
+                        generateTasks(); 
+                    } 
+                });
+                
+                // Check Task Status IMMEDIATELY to switch screens
+                const savedTask = localStorage.getItem('activeTaskState');
+                
+                // Hide Loading & Login, Show App
+                loadingScreen.classList.remove('active');
+                loginScreen.classList.remove('active');
+                appScreen.style.display = 'block';
+
+                if (savedTask) {
+                    // Agar task active hai to direct Earn Screen
+                    showScreen('earn-screen');
+                } else {
+                    // Warna Home Screen
+                    showScreen('home-screen');
+                }
+
+            } else { 
+                // User not logged in
+                currentUser = null; 
+                userData = {}; 
+                localStorage.removeItem('activeTaskState');
+                
+                // Hide Loading & App, Show Login
+                loadingScreen.classList.remove('active');
+                appScreen.style.display = 'none';
+                loginScreen.classList.add('active');
+            } 
+        });
+        
+        function handleTaskClick(taskId) {
+            const taskButton = document.getElementById(`task-btn-${taskId}`);
+            const savedTask = JSON.parse(localStorage.getItem('activeTaskState'));
+
+            if (savedTask && savedTask.id !== taskId) {
+                alert("Please complete the active task first.");
+                return;
+            }
+
+            if (!savedTask) {
+                const taskState = { id: taskId, startTime: Date.now() };
+                localStorage.setItem('activeTaskState', JSON.stringify(taskState));
+                const adsterraSmartLink = "https://www.effectivegatecpm.com/dna655ymre?key=4cea2a8fc360a3f237a1e79c93d38f1b";
+                
+                // Chrome tab open logic
+                window.open(adsterraSmartLink, '_blank'); 
+
+                generateTasks(); 
+            } 
+            else if (savedTask.id === taskId) {
+                const elapsedTime = Date.now() - savedTask.startTime;
+                if (elapsedTime >= 20000) { 
+                    taskButton.innerText = 'Processing...';
+                    taskButton.disabled = true;
+                    completeTask(taskId);
+                } else {
+                    const remainingSeconds = Math.ceil((20000 - elapsedTime) / 1000);
+                    alert(`Please wait for ${remainingSeconds} more seconds.`);
+                }
+            }
+        }
+
+        function completeTask(taskId) { if (userData.tasksCompleted && userData.tasksCompleted.includes(taskId)) { localStorage.removeItem('activeTaskState'); generateTasks(); return; } const userRef = db.collection('users').doc(currentUser.uid); userRef.update({ coins: firebase.firestore.FieldValue.increment(30), tasksCompleted: firebase.firestore.FieldValue.arrayUnion(taskId) }).then(() => { document.getElementById('task-completed-banner').style.display = 'block'; localStorage.removeItem('activeTaskState'); if (!userData.tasksCompleted) { userData.tasksCompleted = []; } userData.tasksCompleted.push(taskId); generateTasks(); }).catch(error => { console.error("Error completing task:", error); alert("Error claiming reward. Please try again."); localStorage.removeItem('activeTaskState'); generateTasks(); }); }
+        function generateTasks() { const taskList = document.getElementById('task-list'); const savedTask = JSON.parse(localStorage.getItem('activeTaskState')); taskList.innerHTML = ''; for (let i = 1; i <= 40; i++) { const isCompleted = userData.tasksCompleted?.includes(i); let buttonHtml = ''; if (isCompleted) { buttonHtml = `<button class="watch-btn" disabled>Completed</button>`; } else if (savedTask && savedTask.id === i) { buttonHtml = `<button class="watch-btn claim-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})">Claim Reward</button>`; } else if (savedTask && savedTask.id !== i) { buttonHtml = `<button class="watch-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})" disabled>Watch Ad</button>`; } else { buttonHtml = `<button class="watch-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})">Watch Ad</button>`; } taskList.innerHTML += `<div class="task"><h4>Task #${i}</h4><p>Earn 30 Coins</p>${buttonHtml}</div>`; } }
+        function showScreen(screenId) { document.querySelectorAll('#app-screen .screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active')); let navId = screenId.includes('withdraw') ? 'nav-withdraw' : `nav-${screenId.split('-')[0]}`; const activeNav = document.getElementById(navId); if (activeNav) activeNav.classList.add('active'); if (screenId === 'referral-screen') displayReferralInfo(); if (screenId === 'withdraw-screen') loadWithdrawalHistory(); }
+        function loadWithdrawalHistory() { if (!currentUser) return; const historyBody = document.getElementById('history-table-body'); historyBody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>'; db.collection('withdrawals').where('userId', '==', currentUser.uid).orderBy('timestamp', 'desc').onSnapshot(snapshot => { if (snapshot.empty) { historyBody.innerHTML = '<tr><td colspan="3">No history found.</td></tr>'; return; } let historyHtml = ''; snapshot.forEach(doc => { const req = doc.data(); const date = req.timestamp ? new Date(req.timestamp.seconds * 1000).toLocaleDateString() : 'N/A'; let statusText = req.status.toUpperCase(); if (req.status === 'accepted') statusText = 'SUCCESS'; historyHtml += `<tr><td>${date}</td><td>${req.amount}</td><td><span class="status-${req.status}">${statusText}</span></td></tr>`; }); historyBody.innerHTML = historyHtml; }, error => { console.error("Error loading withdrawal history:", error); historyBody.innerHTML = '<tr><td colspan="3">Error loading history.</td></tr>'; }); }
+        function signup() { const email = document.getElementById('signup-email').value; const password = document.getElementById('signup-password').value; const referralCodeInput = document.getElementById('referral-code-input').value.trim(); if (!email || !password) return alert("Please enter email and password."); auth.createUserWithEmailAndPassword(email, password).then(userCredential => { const newUser = userCredential.user; const namePart = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, ''); const randomPart = Math.random().toString(36).substring(2, 7); db.collection('users').doc(newUser.uid).set({ email: email, coins: 0, tasksCompleted: [], referralCode: `${namePart}${randomPart}`, referredUsers: [], lastTaskResetDate: '2000-01-01' }).then(() => { if (referralCodeInput) { db.collection('users').where('referralCode', '==', referralCodeInput).get().then(querySnapshot => { if (!querySnapshot.empty) { const referrerDoc = querySnapshot.docs[0]; db.collection('users').doc(referrerDoc.id).update({ coins: firebase.firestore.FieldValue.increment(200), referredUsers: firebase.firestore.FieldValue.arrayUnion(email) }); } }); } alert("Signup successful! Please login."); toggleForms(false); }); }).catch(error => alert(error.message)); }
+        function login() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value).catch(error => alert(error.message)); }
+        function logout() { auth.signOut(); }
+        function toggleForms(showSignup) { document.getElementById('login-form').style.display = showSignup ? 'none' : 'block'; document.getElementById('signup-form').style.display = showSignup ? 'block' : 'none'; }
+        function updateUI() { document.getElementById('user-identifier').innerText = userData.email || ''; document.getElementById('coin-balance').innerText = userData.coins === undefined ? 0 : userData.coins; }
+        function hideTaskCompletedBanner() { document.getElementById('task-completed-banner').style.display = 'none'; }
+        function displayReferralInfo() { document.getElementById('referral-code').innerText = userData.referralCode || ''; const list = document.getElementById('referred-users-list'); list.innerHTML = ''; if (userData.referredUsers && userData.referredUsers.length > 0) { userData.referredUsers.forEach(email => list.innerHTML += `<div class="referred-user">${email}</div>`); } else { list.innerHTML = '<p>No users referred yet.</p>'; } }
+        function showWithdrawForm(method) { localStorage.setItem('withdrawMethod', method); document.getElementById('withdraw-method-title').innerText = `Withdraw via ${method}`; showScreen('withdraw-form-screen'); }
+        function processWithdrawal() { const amount = parseInt(document.getElementById('withdraw-amount').value, 10); if (isNaN(amount) || amount < 5000) return alert('Minimum withdrawal is 5000 coins.'); if (amount > userData.coins) return alert('Aap ke paas itne coins nahi hain.'); const accountNumber = document.getElementById('account-number').value.trim(); const accountName = document.getElementById('account-name').value.trim(); const withdrawMethod = localStorage.getItem('withdrawMethod'); if (!accountNumber || !accountName) return alert('Please fill all fields.'); db.collection('withdrawals').add({ userId: currentUser.uid, email: userData.email, amount: amount, method: withdrawMethod, accountName: accountName, accountNumber: accountNumber, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { db.collection('users').doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(-amount) }); alert("Aap ki withdrawal request submit ho gayi hai. Hum jald aapse raabta karenge."); showScreen('home-screen'); }).catch(error => { console.error("Error processing withdrawal: ", error); alert("Withdrawal mein masla aa gaya. Dobara koshish karein."); }); }
+    </script>
+
+    <!-- Adsterra Banner Ad -->
+    <div class="ad-banner-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'a9d56ba690f0c9264889d42be6c3eef6',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/a9d56ba690f0c9264889d42be6c3eef6/invoke.js"></script>
+    </div>
+
+    <!-- Social Bar Ad -->
+    <script type='text/javascript' src='//pl28071636.effectivegatecpm.com/fe/db/fc/fedbfc816d76d369102d8fd7f390c1d1.js'></script>
+
+</body>
+</html>
