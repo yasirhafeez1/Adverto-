@@ -21,7 +21,7 @@
         .btn { display: block; width: 100%; padding: 12px; border: none; border-radius: 5px; background-color: #007bff; color: #fff; cursor: pointer; font-size: 16px; box-sizing: border-box; }
         .btn:hover { background-color: #0056b3; }
         
-        .btn-contact { background-color: #ffc107; color: #212529; margin-top: 60px; }
+        .btn-contact { background-color: #ffc107; color: #212529; margin-top: 20px; }
         .btn-contact:hover { background-color: #e0a800; }
 
         .form-group { margin-bottom: 15px; }
@@ -68,13 +68,13 @@
 
     <div class="container">
         
-        <!-- NEW LOADING SCREEN (Sabse pehle ye dikhega) -->
+        <!-- LOADING SCREEN -->
         <div id="loading-screen" class="screen active">
             <div class="loader"></div>
             <h3>Please Wait...</h3>
         </div>
 
-        <!-- LOGIN SCREEN (Ab default active nahi hai) -->
+        <!-- LOGIN SCREEN -->
         <div id="login-screen" class="screen">
             <div id="login-form">
                 <h2>Login</h2>
@@ -102,12 +102,32 @@
                 <button id="nav-withdraw" class="nav-btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
                 <button class="nav-btn" onclick="logout()">Logout</button>
             </div>
+            
             <div id="home-screen" class="screen">
-                <div class="profile"><img src="https://via.placeholder.com/80" alt="Profile Picture"><h3 id="user-identifier"></h3></div>
+                <div class="profile">
+                    <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                    <h3 id="user-identifier"></h3>
+                </div>
                 <div class="coins">Coins: <span id="coin-balance">0</span></div>
+                
                 <button type="button" class="btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
                 <button type="button" class="btn btn-contact" onclick="window.location.href='https://whatsapp.com/channel/0029VbAsxN09WtC46ocaoR1o'">Contact Us</button>
+
+                <!-- === YAHAN AAPKA NAYA 300x250 AD HAI === -->
+<script type="text/javascript">
+	atOptions = {
+		'key' : 'fb569591eaefc5111dc51baf51dca379',
+		'format' : 'iframe',
+		'height' : 250,
+		'width' : 300,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/fb569591eaefc5111dc51baf51dca379/invoke.js"></script>
+                <!-- ======================================= -->
+
             </div>
+
             <div id="earn-screen" class="screen"><h2>Tasks</h2><div id="task-list"></div></div>
             <div id="referral-screen" class="screen">
                 <h2>Referral Program</h2>
@@ -153,7 +173,7 @@
         function getTodayDateString() { const today = new Date(); const year = today.getFullYear(); const month = String(today.getMonth() + 1).padStart(2, '0'); const day = String(today.getDate()).padStart(2, '0'); return `${year}-${month}-${day}`; }
         async function checkAndResetTasksDaily() { if (!currentUser) return; const todayStr = getTodayDateString(); const lastResetDate = userData.lastTaskResetDate; if (lastResetDate !== todayStr) { const userRef = db.collection('users').doc(currentUser.uid); try { await userRef.update({ tasksCompleted: [], lastTaskResetDate: todayStr }); userData.tasksCompleted = []; userData.lastTaskResetDate = todayStr; } catch (error) { console.error("Error resetting tasks: ", error); } } }
         
-        // === AUTH LISTENER: Yeh decide karega ke kaunsi screen dikhani hai ===
+        // === AUTH LISTENER ===
         auth.onAuthStateChanged(user => { 
             const loadingScreen = document.getElementById('loading-screen');
             const loginScreen = document.getElementById('login-screen');
@@ -161,8 +181,6 @@
 
             if (user) { 
                 currentUser = user;
-                
-                // Setup Realtime Listener
                 db.collection('users').doc(currentUser.uid).onSnapshot(async (doc) => { 
                     if (doc.exists) { 
                         userData = doc.data(); 
@@ -172,29 +190,21 @@
                     } 
                 });
                 
-                // Check Task Status IMMEDIATELY to switch screens
                 const savedTask = localStorage.getItem('activeTaskState');
-                
-                // Hide Loading & Login, Show App
                 loadingScreen.classList.remove('active');
                 loginScreen.classList.remove('active');
                 appScreen.style.display = 'block';
 
                 if (savedTask) {
-                    // Agar task active hai to direct Earn Screen
                     showScreen('earn-screen');
                 } else {
-                    // Warna Home Screen
                     showScreen('home-screen');
                 }
 
             } else { 
-                // User not logged in
                 currentUser = null; 
                 userData = {}; 
                 localStorage.removeItem('activeTaskState');
-                
-                // Hide Loading & App, Show Login
                 loadingScreen.classList.remove('active');
                 appScreen.style.display = 'none';
                 loginScreen.classList.add('active');
@@ -214,10 +224,7 @@
                 const taskState = { id: taskId, startTime: Date.now() };
                 localStorage.setItem('activeTaskState', JSON.stringify(taskState));
                 const adsterraSmartLink = "https://www.effectivegatecpm.com/dna655ymre?key=4cea2a8fc360a3f237a1e79c93d38f1b";
-                
-                // Chrome tab open logic
                 window.open(adsterraSmartLink, '_blank'); 
-
                 generateTasks(); 
             } 
             else if (savedTask.id === taskId) {
@@ -248,7 +255,7 @@
         function processWithdrawal() { const amount = parseInt(document.getElementById('withdraw-amount').value, 10); if (isNaN(amount) || amount < 5000) return alert('Minimum withdrawal is 5000 coins.'); if (amount > userData.coins) return alert('Aap ke paas itne coins nahi hain.'); const accountNumber = document.getElementById('account-number').value.trim(); const accountName = document.getElementById('account-name').value.trim(); const withdrawMethod = localStorage.getItem('withdrawMethod'); if (!accountNumber || !accountName) return alert('Please fill all fields.'); db.collection('withdrawals').add({ userId: currentUser.uid, email: userData.email, amount: amount, method: withdrawMethod, accountName: accountName, accountNumber: accountNumber, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { db.collection('users').doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(-amount) }); alert("Aap ki withdrawal request submit ho gayi hai. Hum jald aapse raabta karenge."); showScreen('home-screen'); }).catch(error => { console.error("Error processing withdrawal: ", error); alert("Withdrawal mein masla aa gaya. Dobara koshish karein."); }); }
     </script>
 
-    <!-- Adsterra Banner Ad -->
+    <!-- Adsterra 320x50 Banner Ad (Neeche wala) -->
     <div class="ad-banner-container">
         <script type="text/javascript">
             atOptions = {
