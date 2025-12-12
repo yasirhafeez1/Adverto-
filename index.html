@@ -7,7 +7,7 @@
     <style>
         /* Styles */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
-        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 60px; /* Bottom Ad Space */ }
+        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 70px; /* Thora zyada space diya hai taake ads chup na jayen */ }
         
         .screen { display: none; padding: 20px; }
         .screen.active { display: block; }
@@ -59,7 +59,7 @@
             width: 320px;
             height: 50px;
             z-index: 9999;
-            background-color: #f0f2f5; /* Background to ensure visibility */
+            background-color: #f0f2f5;
         }
     </style>
 </head>
@@ -112,7 +112,7 @@
                 <button type="button" class="btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
                 <button type="button" class="btn btn-contact" onclick="window.location.href='https://whatsapp.com/channel/0029VbAsxN09WtC46ocaoR1o'">Contact Us</button>
 
-                <!-- AD 1: 300x250 Banner (Center) -->
+                <!-- AD 1: 300x250 Banner (Home Screen) -->
                 <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center;">
                     <script type="text/javascript">
                         atOptions = {
@@ -125,11 +125,27 @@
                     </script>
                     <script type="text/javascript" src="//www.highperformanceformat.com/b59c8e2c21d7d36e535239364b1c919d/invoke.js"></script>
                 </div>
-                <!-- ============================ -->
-
             </div>
 
-            <div id="earn-screen" class="screen"><h2>Tasks</h2><div id="task-list"></div></div>
+            <div id="earn-screen" class="screen">
+                <h2>Tasks</h2>
+                <div id="task-list"></div>
+                
+                <!-- AD: Earn Screen (New 300x250 Ad) -->
+                <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
+                    <script type="text/javascript">
+                      atOptions = {
+                        'key' : '6c19030e5036dea49bc1a1c65fdbb399',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                      };
+                    </script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/6c19030e5036dea49bc1a1c65fdbb399/invoke.js"></script>
+                </div>
+            </div>
+
             <div id="referral-screen" class="screen">
                 <h2>Referral Program</h2>
                 <div class="referral-box">
@@ -138,7 +154,22 @@
                     <p id="referral-code"></p>
                 </div>
                 <h3>Users you referred:</h3><div id="referred-users-list"></div>
+
+                <!-- AD: Referral Screen (New 300x250 Ad) -->
+                <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
+                    <script type="text/javascript">
+                      atOptions = {
+                        'key' : '6c19030e5036dea49bc1a1c65fdbb399',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                      };
+                    </script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/6c19030e5036dea49bc1a1c65fdbb399/invoke.js"></script>
+                </div>
             </div>
+
             <div id="withdraw-screen" class="screen">
                 <h2>Withdraw</h2>
                 <div class="withdraw-option" onclick="showWithdrawForm('Easypaisa')"><h3>Easypaisa</h3></div>
@@ -150,7 +181,22 @@
                         <tbody id="history-table-body"></tbody>
                     </table>
                 </div>
+
+                <!-- AD: Withdraw Screen (New 300x250 Ad) -->
+                <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
+                    <script type="text/javascript">
+                      atOptions = {
+                        'key' : '6c19030e5036dea49bc1a1c65fdbb399',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                      };
+                    </script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/6c19030e5036dea49bc1a1c65fdbb399/invoke.js"></script>
+                </div>
             </div>
+
             <div id="withdraw-form-screen" class="screen">
                 <h2 id="withdraw-method-title"></h2>
                 <div class="form-group"><input type="text" id="account-number" placeholder="Account Number"></div>
@@ -178,7 +224,6 @@
         function getTodayDateString() { const today = new Date(); const year = today.getFullYear(); const month = String(today.getMonth() + 1).padStart(2, '0'); const day = String(today.getDate()).padStart(2, '0'); return `${year}-${month}-${day}`; }
         async function checkAndResetTasksDaily() { if (!currentUser) return; const todayStr = getTodayDateString(); const lastResetDate = userData.lastTaskResetDate; if (lastResetDate !== todayStr) { const userRef = db.collection('users').doc(currentUser.uid); try { await userRef.update({ tasksCompleted: [], lastTaskResetDate: todayStr }); userData.tasksCompleted = []; userData.lastTaskResetDate = todayStr; } catch (error) { console.error("Error resetting tasks: ", error); } } }
         
-        // === AUTH LISTENER ===
         auth.onAuthStateChanged(user => { 
             const loadingScreen = document.getElementById('loading-screen');
             const loginScreen = document.getElementById('login-screen');
@@ -229,7 +274,7 @@
                 const taskState = { id: taskId, startTime: Date.now() };
                 localStorage.setItem('activeTaskState', JSON.stringify(taskState));
                 
-                // AD 2: SMART LINK (DIRECT LINK)
+                // 1 YEAR OLD SMART LINK
                 const adsterraSmartLink = "https://www.effectivegatecpm.com/qi6iff38?key=a93f19be29898152177f2f3f6939bd54"; 
                 // ==============================
 
@@ -249,7 +294,6 @@
             }
         }
 
-        // === COMMISSION LOGIC ===
         function completeTask(taskId) { 
             if (userData.tasksCompleted && userData.tasksCompleted.includes(taskId)) { localStorage.removeItem('activeTaskState'); generateTasks(); return; } 
             const userRef = db.collection('users').doc(currentUser.uid); 
@@ -312,7 +356,7 @@
         function processWithdrawal() { const amount = parseInt(document.getElementById('withdraw-amount').value, 10); if (isNaN(amount) || amount < 5000) return alert('Minimum withdrawal is 5000 coins.'); if (amount > userData.coins) return alert('Aap ke paas itne coins nahi hain.'); const accountNumber = document.getElementById('account-number').value.trim(); const accountName = document.getElementById('account-name').value.trim(); const withdrawMethod = localStorage.getItem('withdrawMethod'); if (!accountNumber || !accountName) return alert('Please fill all fields.'); db.collection('withdrawals').add({ userId: currentUser.uid, email: userData.email, amount: amount, method: withdrawMethod, accountName: accountName, accountNumber: accountNumber, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { db.collection('users').doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(-amount) }); alert("Aap ki withdrawal request submit ho gayi hai. Hum jald aapse raabta karenge."); showScreen('home-screen'); }).catch(error => { console.error("Error processing withdrawal: ", error); alert("Withdrawal mein masla aa gaya. Dobara koshish karein."); }); }
     </script>
 
-    <!-- AD 3: NEW 320x50 Banner (Fixed at Bottom) -->
+    <!-- FIXED FOOTER AD: NEW 320x50 Banner (Fixed at Bottom) -->
     <div class="ad-banner-container">
         <script type="text/javascript">
           atOptions = {
@@ -326,7 +370,7 @@
         <script type="text/javascript" src="https://www.highperformanceformat.com/115f5cf555d14f877b0ee68d7e2909c9/invoke.js"></script>
     </div>
 
-    <!-- AD 4: SOCIAL BAR (Floating) -->
+    <!-- SOCIAL BAR (Floating) -->
     <script type='text/javascript' src='//pl28071636.effectivegatecpm.com/fe/db/fc/fedbfc816d76d369102d8fd7f390c1d1.js'></script>
 
 </body>
