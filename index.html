@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to ADVERTO</title>
     <style>
-        /* Styles wese hi hain */
+        /* Styles */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
-        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 60px; }
+        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 60px; /* Bottom Ad Space */ }
         
-        /* Screen Classes */
         .screen { display: none; padding: 20px; }
         .screen.active { display: block; }
         
-        /* Loading Screen Style */
         #loading-screen { text-align: center; padding-top: 50%; }
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid #007bff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -61,6 +59,7 @@
             width: 320px;
             height: 50px;
             z-index: 9999;
+            background-color: #f0f2f5; /* Background to ensure visibility */
         }
     </style>
 </head>
@@ -113,7 +112,7 @@
                 <button type="button" class="btn" onclick="showScreen('withdraw-screen')">Withdraw</button>
                 <button type="button" class="btn btn-contact" onclick="window.location.href='https://whatsapp.com/channel/0029VbAsxN09WtC46ocaoR1o'">Contact Us</button>
 
-                <!-- Adsterra 300x250 Ad -->
+                <!-- AD 1: 300x250 Banner (Center) -->
                 <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center;">
                     <script type="text/javascript">
                         atOptions = {
@@ -126,6 +125,7 @@
                     </script>
                     <script type="text/javascript" src="//www.highperformanceformat.com/b59c8e2c21d7d36e535239364b1c919d/invoke.js"></script>
                 </div>
+                <!-- ============================ -->
 
             </div>
 
@@ -228,7 +228,11 @@
             if (!savedTask) {
                 const taskState = { id: taskId, startTime: Date.now() };
                 localStorage.setItem('activeTaskState', JSON.stringify(taskState));
-                const adsterraSmartLink = "https://www.effectivegatecpm.com/dna655ymre?key=4cea2a8fc360a3f237a1e79c93d38f1b";
+                
+                // AD 2: SMART LINK (DIRECT LINK)
+                const adsterraSmartLink = "https://www.effectivegatecpm.com/qi6iff38?key=a93f19be29898152177f2f3f6939bd54"; 
+                // ==============================
+
                 window.open(adsterraSmartLink, '_blank'); 
                 generateTasks(); 
             } 
@@ -245,98 +249,56 @@
             }
         }
 
-        // === COMMISSION LOGIC ADDED HERE ===
+        // === COMMISSION LOGIC ===
         function completeTask(taskId) { 
-            if (userData.tasksCompleted && userData.tasksCompleted.includes(taskId)) { 
-                localStorage.removeItem('activeTaskState'); 
-                generateTasks(); 
-                return; 
-            } 
-            
+            if (userData.tasksCompleted && userData.tasksCompleted.includes(taskId)) { localStorage.removeItem('activeTaskState'); generateTasks(); return; } 
             const userRef = db.collection('users').doc(currentUser.uid); 
-            
-            // 1. Apne user ko 30 coins do
             userRef.update({ 
                 coins: firebase.firestore.FieldValue.increment(30), 
                 tasksCompleted: firebase.firestore.FieldValue.arrayUnion(taskId) 
             }).then(() => { 
-                
-                // 2. Agar koi Referrer hai, to usko 6 coins (20%) do
                 if (userData.referredBy) {
                     const referrerRef = db.collection('users').doc(userData.referredBy);
                     referrerRef.update({
-                        coins: firebase.firestore.FieldValue.increment(6) // 30 ka 20% = 6 coins
+                        coins: firebase.firestore.FieldValue.increment(6) 
                     }).catch(err => console.log("Commission error: ", err));
                 }
-
                 document.getElementById('task-completed-banner').style.display = 'block'; 
                 localStorage.removeItem('activeTaskState'); 
                 if (!userData.tasksCompleted) { userData.tasksCompleted = []; } 
                 userData.tasksCompleted.push(taskId); 
                 generateTasks(); 
-            }).catch(error => { 
-                console.error("Error completing task:", error); 
-                alert("Error claiming reward. Please try again."); 
-                localStorage.removeItem('activeTaskState'); 
-                generateTasks(); 
-            }); 
+            }).catch(error => { console.error("Error completing task:", error); alert("Error claiming reward. Please try again."); localStorage.removeItem('activeTaskState'); generateTasks(); }); 
         }
 
         function generateTasks() { const taskList = document.getElementById('task-list'); const savedTask = JSON.parse(localStorage.getItem('activeTaskState')); taskList.innerHTML = ''; for (let i = 1; i <= 40; i++) { const isCompleted = userData.tasksCompleted?.includes(i); let buttonHtml = ''; if (isCompleted) { buttonHtml = `<button class="watch-btn" disabled>Completed</button>`; } else if (savedTask && savedTask.id === i) { buttonHtml = `<button class="watch-btn claim-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})">Claim Reward</button>`; } else if (savedTask && savedTask.id !== i) { buttonHtml = `<button class="watch-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})" disabled>Watch Ad</button>`; } else { buttonHtml = `<button class="watch-btn" id="task-btn-${i}" onclick="handleTaskClick(${i})">Watch Ad</button>`; } taskList.innerHTML += `<div class="task"><h4>Task #${i}</h4><p>Earn 30 Coins</p>${buttonHtml}</div>`; } }
         function showScreen(screenId) { document.querySelectorAll('#app-screen .screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active')); let navId = screenId.includes('withdraw') ? 'nav-withdraw' : `nav-${screenId.split('-')[0]}`; const activeNav = document.getElementById(navId); if (activeNav) activeNav.classList.add('active'); if (screenId === 'referral-screen') displayReferralInfo(); if (screenId === 'withdraw-screen') loadWithdrawalHistory(); }
         function loadWithdrawalHistory() { if (!currentUser) return; const historyBody = document.getElementById('history-table-body'); historyBody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>'; db.collection('withdrawals').where('userId', '==', currentUser.uid).orderBy('timestamp', 'desc').onSnapshot(snapshot => { if (snapshot.empty) { historyBody.innerHTML = '<tr><td colspan="3">No history found.</td></tr>'; return; } let historyHtml = ''; snapshot.forEach(doc => { const req = doc.data(); const date = req.timestamp ? new Date(req.timestamp.seconds * 1000).toLocaleDateString() : 'N/A'; let statusText = req.status.toUpperCase(); if (req.status === 'accepted') statusText = 'SUCCESS'; historyHtml += `<tr><td>${date}</td><td>${req.amount}</td><td><span class="status-${req.status}">${statusText}</span></td></tr>`; }); historyBody.innerHTML = historyHtml; }, error => { console.error("Error loading withdrawal history:", error); historyBody.innerHTML = '<tr><td colspan="3">Error loading history.</td></tr>'; }); }
         
-        // === SIGNUP LOGIC UPDATED ===
         function signup() { 
             const email = document.getElementById('signup-email').value; 
             const password = document.getElementById('signup-password').value; 
             const referralCodeInput = document.getElementById('referral-code-input').value.trim(); 
-            
             if (!email || !password) return alert("Please enter email and password."); 
-            
             auth.createUserWithEmailAndPassword(email, password).then(userCredential => { 
                 const newUser = userCredential.user; 
                 const namePart = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, ''); 
                 const randomPart = Math.random().toString(36).substring(2, 7); 
-                
-                // Pehle Referrer dhoondo agar code diya hai
-                let referredByUID = null;
-                
                 const createUserDoc = (referrerId) => {
                      db.collection('users').doc(newUser.uid).set({ 
-                        email: email, 
-                        coins: 0, 
-                        tasksCompleted: [], 
-                        referralCode: `${namePart}${randomPart}`, 
-                        referredUsers: [], 
-                        lastTaskResetDate: '2000-01-01',
-                        referredBy: referrerId // Yahan save hoga ke kis ne refer kiya
-                    }).then(() => {
-                        alert("Signup successful! Please login."); 
-                        toggleForms(false);
-                    });
+                        email: email, coins: 0, tasksCompleted: [], referralCode: `${namePart}${randomPart}`, referredUsers: [], lastTaskResetDate: '2000-01-01', referredBy: referrerId 
+                    }).then(() => { alert("Signup successful! Please login."); toggleForms(false); });
                 };
-
                 if (referralCodeInput) { 
                     db.collection('users').where('referralCode', '==', referralCodeInput).get().then(querySnapshot => { 
                         if (!querySnapshot.empty) { 
                             const referrerDoc = querySnapshot.docs[0];
                             const referrerId = referrerDoc.id;
-                            
-                            // Referrer ki list update karo (Lekin 200 coins mat do)
-                            db.collection('users').doc(referrerId).update({ 
-                                referredUsers: firebase.firestore.FieldValue.arrayUnion(email) 
-                            });
-                            
-                            createUserDoc(referrerId); // Naye user ko referrer ID ke sath create karo
-                        } else {
-                            createUserDoc(null); // Code ghalat tha, bina referrer ke banao
-                        }
+                            db.collection('users').doc(referrerId).update({ referredUsers: firebase.firestore.FieldValue.arrayUnion(email) });
+                            createUserDoc(referrerId); 
+                        } else { createUserDoc(null); }
                     }); 
-                } else {
-                    createUserDoc(null); // Code nahi diya
-                }
-                
+                } else { createUserDoc(null); }
             }).catch(error => alert(error.message)); 
         }
 
@@ -350,21 +312,21 @@
         function processWithdrawal() { const amount = parseInt(document.getElementById('withdraw-amount').value, 10); if (isNaN(amount) || amount < 5000) return alert('Minimum withdrawal is 5000 coins.'); if (amount > userData.coins) return alert('Aap ke paas itne coins nahi hain.'); const accountNumber = document.getElementById('account-number').value.trim(); const accountName = document.getElementById('account-name').value.trim(); const withdrawMethod = localStorage.getItem('withdrawMethod'); if (!accountNumber || !accountName) return alert('Please fill all fields.'); db.collection('withdrawals').add({ userId: currentUser.uid, email: userData.email, amount: amount, method: withdrawMethod, accountName: accountName, accountNumber: accountNumber, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { db.collection('users').doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(-amount) }); alert("Aap ki withdrawal request submit ho gayi hai. Hum jald aapse raabta karenge."); showScreen('home-screen'); }).catch(error => { console.error("Error processing withdrawal: ", error); alert("Withdrawal mein masla aa gaya. Dobara koshish karein."); }); }
     </script>
 
-    <!-- Adsterra 320x50 Banner Ad -->
+    <!-- AD 3: NEW 320x50 Banner (Fixed at Bottom) -->
     <div class="ad-banner-container">
         <script type="text/javascript">
-            atOptions = {
-                'key' : 'a9d56ba690f0c9264889d42be6c3eef6',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
+          atOptions = {
+          	'key' : '115f5cf555d14f877b0ee68d7e2909c9',
+          	'format' : 'iframe',
+          	'height' : 50,
+          	'width' : 320,
+          	'params' : {}
+          };
         </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/a9d56ba690f0c9264889d42be6c3eef6/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/115f5cf555d14f877b0ee68d7e2909c9/invoke.js"></script>
     </div>
 
-    <!-- Social Bar Ad -->
+    <!-- AD 4: SOCIAL BAR (Floating) -->
     <script type='text/javascript' src='//pl28071636.effectivegatecpm.com/fe/db/fc/fedbfc816d76d369102d8fd7f390c1d1.js'></script>
 
 </body>
