@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to ADVERTO</title>
     <style>
-        /* Styles */
+        /* Styles same hain */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
-        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 70px; /* Thora zyada space diya hai taake ads chup na jayen */ }
+        .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 70px; }
         
         .screen { display: none; padding: 20px; }
         .screen.active { display: block; }
@@ -172,8 +172,12 @@
 
             <div id="withdraw-screen" class="screen">
                 <h2>Withdraw</h2>
+                
+                <!-- WITHDRAW OPTIONS (Paypal Added) -->
                 <div class="withdraw-option" onclick="showWithdrawForm('Easypaisa')"><h3>Easypaisa</h3></div>
                 <div class="withdraw-option" onclick="showWithdrawForm('Jazzcash')"><h3>Jazzcash</h3></div>
+                <div class="withdraw-option" onclick="showWithdrawForm('Paypal')"><h3>PayPal</h3></div>
+                
                 <div id="history-container">
                     <h3>Withdrawal History</h3>
                     <table id="history-table">
@@ -199,7 +203,7 @@
 
             <div id="withdraw-form-screen" class="screen">
                 <h2 id="withdraw-method-title"></h2>
-                <div class="form-group"><input type="text" id="account-number" placeholder="Account Number"></div>
+                <div class="form-group"><input type="text" id="account-number" placeholder="Account Number / Email"></div>
                 <div class="form-group"><input type="text" id="account-name" placeholder="Account Name"></div>
                 <div class="form-group"><input type="number" id="withdraw-amount" placeholder="Amount (min 5000 coins)"></div>
                 <button type="button" class="btn" onclick="processWithdrawal()">Withdraw</button>
@@ -275,7 +279,7 @@
                 localStorage.setItem('activeTaskState', JSON.stringify(taskState));
                 
                 // 1 YEAR OLD SMART LINK
-                const adsterraSmartLink = "https://www.effectivegatecpm.com/pg39dtzm?key=a596df88135f1d416b8ece70b5bc8b06"; 
+                const adsterraSmartLink = "https://www.effectivegatecpm.com/gz1r1n1ba5?key=28cf605c3acd0fd43a3d3fccd6cf19f6"; 
                 // ==============================
 
                 window.open(adsterraSmartLink, '_blank'); 
