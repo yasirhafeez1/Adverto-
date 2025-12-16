@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to ADVERTO</title>
     <style>
-        /* Styles same hain */
+        /* Styles */
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #333; }
         .container { max-width: 400px; margin: 0 auto; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); min-height: 100vh; padding-bottom: 70px; }
         
@@ -30,8 +30,11 @@
         .nav { display: flex; justify-content: space-around; background-color: #007bff; padding: 10px 0; position: sticky; top: 0; z-index: 100; }
         .nav-btn { color: #fff; background: none; border: none; font-size: 14px; cursor: pointer; padding: 5px 10px; }
         .nav-btn.active { border-bottom: 2px solid #fff; }
+        
+        /* LOGO STYLE */
         #home-screen .profile { text-align: center; margin: 20px 0; }
-        #home-screen .profile img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+        #home-screen .profile img { width: 150px; height: auto; border-radius: 10px; margin-bottom: 10px; object-fit: contain; }
+
         #home-screen .coins { text-align: center; font-size: 24px; margin-bottom: 30px; }
         .task { border: 1px solid #ddd; border-radius: 5px; padding: 15px; background-color: #f9f9f9; margin-bottom: 15px; }
         .task .watch-btn { background-color: #28a745; color: #fff; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
@@ -104,7 +107,8 @@
             
             <div id="home-screen" class="screen">
                 <div class="profile">
-                    <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                    <!-- LOGO -->
+                    <img src="logo.png" alt="Adverto Logo">
                     <h3 id="user-identifier"></h3>
                 </div>
                 <div class="coins">Coins: <span id="coin-balance">0</span></div>
@@ -131,7 +135,7 @@
                 <h2>Tasks</h2>
                 <div id="task-list"></div>
                 
-                <!-- AD: Earn Screen (New 300x250 Ad) -->
+                <!-- AD: Earn Screen (300x250) -->
                 <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
                     <script type="text/javascript">
                       atOptions = {
@@ -155,7 +159,7 @@
                 </div>
                 <h3>Users you referred:</h3><div id="referred-users-list"></div>
 
-                <!-- AD: Referral Screen (New 300x250 Ad) -->
+                <!-- AD: Referral Screen (300x250) -->
                 <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
                     <script type="text/javascript">
                       atOptions = {
@@ -173,10 +177,9 @@
             <div id="withdraw-screen" class="screen">
                 <h2>Withdraw</h2>
                 
-                <!-- WITHDRAW OPTIONS (Paypal Added) -->
                 <div class="withdraw-option" onclick="showWithdrawForm('Easypaisa')"><h3>Easypaisa</h3></div>
                 <div class="withdraw-option" onclick="showWithdrawForm('Jazzcash')"><h3>Jazzcash</h3></div>
-                <div class="withdraw-option" onclick="showWithdrawForm('Paypal')"><h3>PayPal</h3></div>
+                <div class="withdraw-option" onclick="showWithdrawForm('PayPal')"><h3>PayPal</h3></div>
                 
                 <div id="history-container">
                     <h3>Withdrawal History</h3>
@@ -186,7 +189,7 @@
                     </table>
                 </div>
 
-                <!-- AD: Withdraw Screen (New 300x250 Ad) -->
+                <!-- AD: Withdraw Screen (300x250) -->
                 <div style="margin-top: 20px; text-align: center; display: flex; justify-content: center; margin-bottom: 20px;">
                     <script type="text/javascript">
                       atOptions = {
@@ -203,7 +206,12 @@
 
             <div id="withdraw-form-screen" class="screen">
                 <h2 id="withdraw-method-title"></h2>
-                <div class="form-group"><input type="text" id="account-number" placeholder="Account Number / Email"></div>
+                
+                <!-- Yahan logic lagayi hai ke PayPal ke liye "Email" likha aye -->
+                <div class="form-group">
+                    <input type="text" id="account-number" placeholder="Account Number">
+                </div>
+                
                 <div class="form-group"><input type="text" id="account-name" placeholder="Account Name"></div>
                 <div class="form-group"><input type="number" id="withdraw-amount" placeholder="Amount (min 5000 coins)"></div>
                 <button type="button" class="btn" onclick="processWithdrawal()">Withdraw</button>
@@ -279,7 +287,7 @@
                 localStorage.setItem('activeTaskState', JSON.stringify(taskState));
                 
                 // 1 YEAR OLD SMART LINK
-                const adsterraSmartLink = "https://www.effectivegatecpm.com/gz1r1n1ba5?key=28cf605c3acd0fd43a3d3fccd6cf19f6"; 
+                const adsterraSmartLink = "https://www.effectivegatecpm.com/ttbp6q0mh?key=ef4028451cf561c62473945ad09f0578"; 
                 // ==============================
 
                 window.open(adsterraSmartLink, '_blank'); 
@@ -356,7 +364,23 @@
         function updateUI() { document.getElementById('user-identifier').innerText = userData.email || ''; document.getElementById('coin-balance').innerText = userData.coins === undefined ? 0 : userData.coins; }
         function hideTaskCompletedBanner() { document.getElementById('task-completed-banner').style.display = 'none'; }
         function displayReferralInfo() { document.getElementById('referral-code').innerText = userData.referralCode || ''; const list = document.getElementById('referred-users-list'); list.innerHTML = ''; if (userData.referredUsers && userData.referredUsers.length > 0) { userData.referredUsers.forEach(email => list.innerHTML += `<div class="referred-user">${email}</div>`); } else { list.innerHTML = '<p>No users referred yet.</p>'; } }
-        function showWithdrawForm(method) { localStorage.setItem('withdrawMethod', method); document.getElementById('withdraw-method-title').innerText = `Withdraw via ${method}`; showScreen('withdraw-form-screen'); }
+        
+        // === UPDATED WITHDRAW FUNCTION (PayPal Email Logic) ===
+        function showWithdrawForm(method) { 
+            localStorage.setItem('withdrawMethod', method); 
+            document.getElementById('withdraw-method-title').innerText = `Withdraw via ${method}`; 
+            
+            // Logic: Agar PayPal hai to Email maango, warna Number
+            const accInput = document.getElementById('account-number');
+            if (method === 'PayPal') {
+                accInput.placeholder = "PayPal Email Address";
+            } else {
+                accInput.placeholder = "Account Number";
+            }
+            
+            showScreen('withdraw-form-screen'); 
+        }
+
         function processWithdrawal() { const amount = parseInt(document.getElementById('withdraw-amount').value, 10); if (isNaN(amount) || amount < 5000) return alert('Minimum withdrawal is 5000 coins.'); if (amount > userData.coins) return alert('Aap ke paas itne coins nahi hain.'); const accountNumber = document.getElementById('account-number').value.trim(); const accountName = document.getElementById('account-name').value.trim(); const withdrawMethod = localStorage.getItem('withdrawMethod'); if (!accountNumber || !accountName) return alert('Please fill all fields.'); db.collection('withdrawals').add({ userId: currentUser.uid, email: userData.email, amount: amount, method: withdrawMethod, accountName: accountName, accountNumber: accountNumber, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { db.collection('users').doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(-amount) }); alert("Aap ki withdrawal request submit ho gayi hai. Hum jald aapse raabta karenge."); showScreen('home-screen'); }).catch(error => { console.error("Error processing withdrawal: ", error); alert("Withdrawal mein masla aa gaya. Dobara koshish karein."); }); }
     </script>
 
